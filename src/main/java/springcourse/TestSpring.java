@@ -17,8 +17,20 @@ public class TestSpring {
 //
 //        System.out.println(musicPlayer.getName());
 //        System.out.println(musicPlayer.getVolume());
-        MusicPlayer musicPlayer = context.getBean("musicPlayer", MusicPlayer.class);
-        musicPlayer.playMusicList();
+        MusicPlayer firstmusicPlayer = context.getBean("musicPlayer", MusicPlayer.class);
+        MusicPlayer secondmusicPlayer = context.getBean("musicPlayer", MusicPlayer.class);
+
+        boolean comparison = firstmusicPlayer == secondmusicPlayer; //переменные указывают на один и тот же объект
+        System.out.println(comparison);
+
+        System.out.println(firstmusicPlayer);
+        System.out.println(secondmusicPlayer);
+
+        firstmusicPlayer.setVolume(10);
+        System.out.println(firstmusicPlayer.getVolume());
+        System.out.println(secondmusicPlayer.getVolume()); //будет значение 10, как у firstPlayer, т.к scope Singleton
+
+        firstmusicPlayer.playMusicList();
 
         context.close();
     }
