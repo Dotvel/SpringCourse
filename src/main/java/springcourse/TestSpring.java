@@ -12,8 +12,14 @@ public class TestSpring {
 
         //MusicPlayer musicPlayer = new MusicPlayer(music); //внедряем зависимость вручную в конструкторе
         //при создании нового объекта
+//        MusicPlayer musicPlayer = context.getBean("musicPlayer", MusicPlayer.class);
+//        musicPlayer.playMusic();
+//
+//        System.out.println(musicPlayer.getName());
+//        System.out.println(musicPlayer.getVolume());
         MusicPlayer musicPlayer = context.getBean("musicPlayer", MusicPlayer.class);
-        musicPlayer.playMusic();
+        musicPlayer.playMusicList();
+
         context.close();
     }
 }
