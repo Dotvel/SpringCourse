@@ -3,5 +3,5 @@ package springcourse;
 import java.util.List;
 
 public interface Music {
-    List<String> getSong(); //переделали интерфейс
+    String getSong(); //переделали интерфейс
 }

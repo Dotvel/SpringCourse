@@ -2,32 +2,37 @@ package springcourse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 @Component
 public class MusicPlayer {
-    private ClassicalMusic classicalMusic;
-    private RockMusic rockMusic;
+    @Value("${musicPlayer.name}")
+    private String name;
 
-    @Autowired
-    public MusicPlayer(ClassicalMusic classicalMusic, RockMusic rockMusic) {
-        this.classicalMusic = classicalMusic;
-        this.rockMusic = rockMusic;
+    @Value("${musicPlayer.volume}")
+    private int volume;
+
+    public String getName() {
+        return name;
     }
 
-    public void playMusic(MusicEnum musicEnum) { //переделали метод, который в параметры принимает Enum
-        Random random = new Random();
+    public int getVolume() {
+        return volume;
+    }
 
-        int randomNumber = random.nextInt(3); //случайное число от 0 до 3-х
+    private Music music1;
+    private Music music2;
 
-        if (musicEnum == MusicEnum.CLASSICAL_MUSIC) {
-            System.out.println(classicalMusic.getSong().get(randomNumber));
-        } else {
-            System.out.println(rockMusic.getSong().get(randomNumber));
-        }
+    @Autowired
+    public MusicPlayer(@Qualifier("rockMusic") Music music1,
+                       @Qualifier("classicalMusic") Music music2) {
+        this.music1 = music1;
+        this.music2 = music2;
+    }
+
+    public String playMusic() {
+        return "Playing: " + music1.getSong() + ", " + music2.getSong();
     }
 }
