@@ -1,8 +1,10 @@
 package ru.alishev.springcourse.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.alishev.springcourse.dao.PersonDAO;
 import ru.alishev.springcourse.models.Person;
@@ -38,7 +40,12 @@ public class PeopleController {
     }
 
     @PostMapping
-    private String create(@ModelAttribute("person") Person person) {
+    private String create(@ModelAttribute("person") @Valid Person person,
+                          BindingResult bindingResult) { //в этот объект класса BindingResult будут помещаться
+        //все ошибки валидации класса Person
+        if (bindingResult.hasErrors()) {
+            return "people/new";
+        }
         personDAO.save(person);
         return "redirect:/people";
     }
@@ -50,7 +57,11 @@ public class PeopleController {
     }
 
     @PostMapping("/{id}")
-    public String update(@ModelAttribute("person") Person person, @PathVariable("id") int id) {
+    public String update(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
+                         @PathVariable("id") int id) {
+        if (bindingResult.hasErrors()) {
+            return "people/edit";
+        }
         personDAO.update(id, person);
         return "redirect:/people";
     }
