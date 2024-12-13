@@ -30,7 +30,7 @@ public class PersonDAO {
         }
     }
 
-    public List<Person> index(){
+    public List<Person> index() {
 
         List<Person> people = new ArrayList<>();
 
@@ -55,31 +55,74 @@ public class PersonDAO {
         }
         return people;
     }
-    public Person show (int id){
-//        return people.stream().filter(person -> person.getId() == id).findAny().orElse(null);
-        return null;
-    }
-    public void save (Person person){
-//        person.setId(++PEOPLE_COUNT);
-//        people.add(person);
+
+    public Person show(int id) {
+        Person person = null; //переменную класса Person объявляем здесь, чтобы она была не внутри блока try
+        //иначе мы не сможем её вернуть в методе
+
         try {
-            Statement statement = connection.createStatement();
-            String SQL = "INSERT INTO person VALUES (" + 1 + ",'" + person.getName() + "','" + person.getAge()
-                    + "','" + person.getEmail() + "')";
-            //INSERT INTO person VALUES(1, 'Tom', 18, 'tom@mail.ru')
-            statement.executeUpdate(SQL); //данный метод изменяет данные в бд, не возвращая их
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("SELECT * FROM Person WHERE id=?");
+            preparedStatement.setInt(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            resultSet.next();
+
+            person = new Person();
+            person.setId(resultSet.getInt("id"));
+            person.setName(resultSet.getString("name"));
+            person.setEmail(resultSet.getString("email"));
+            person.setAge(resultSet.getInt("age"));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return person;
+    }
+
+    public void save(Person person) {
+
+        try {
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("INSERT INTO Person VALUES (1,?, ?, ?)");
+            preparedStatement.setString(1, person.getName());
+            preparedStatement.setInt(2, person.getAge());
+            preparedStatement.setString(3, person.getEmail());
+
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public void update (int id, Person uddatedPerson){
-//        Person personTobeUpdated = show(id);
-//
-//        personTobeUpdated.setName(uddatedPerson.getName());
-//        personTobeUpdated.setAge(uddatedPerson.getAge());
-//        personTobeUpdated.setEmail(uddatedPerson.getEmail());
+
+    public void update(int id, Person uddatedPerson) {
+        try {
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("UPDATE SET name=?, age=?, email=? WHERE id=?");
+
+            preparedStatement.setString(1, uddatedPerson.getName());
+            preparedStatement.setInt(2, uddatedPerson.getAge());
+            preparedStatement.setString(3, uddatedPerson.getEmail());
+            preparedStatement.setInt(4, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
-    public void delete (int id){
-      //  people.removeIf(p -> p.getId() == id);
+
+    public void delete(int id) {
+        try {
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("DELETE FROM Person WHERE id=?");
+
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
